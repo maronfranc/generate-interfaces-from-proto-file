@@ -1,0 +1,1 @@
+# generate-interfaces-from-proto-file
