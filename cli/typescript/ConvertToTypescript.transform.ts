@@ -14,12 +14,12 @@ const replaceProtoToTypescript = (str: string): string => str
     .replace(/->L<-(\w+)/g, (_, word: string): string => word[0].toLowerCase() + word.substring(1))
     // creates classes and interfaces
     .replace(/service/g, "export class")
-    .replace(/message/g, "export class")
+    .replace(/message/g, "export interface")
     .replace(/enum/g, "// TODO: enum convertion\nexport enum")
     // add [] when starts with repeated word
-    .replace(/repeated\s+(\w+)\s+(\w+):?\w*?\s(=\s*\d+|\w+)/g, "public $2: $1[]")
+    .replace(/repeated\s+(\w+)\s+(\w+):?\w*?\s(=\s*\d+|\w+)/g, "$2: $1[]")
     // changes words order
-    .replace(groupTypeAndVariableName, "public $2: $1")
+    .replace(groupTypeAndVariableName, "$2: $1")
     // replace incorrects type names
     .replace(/bool/g, "boolean")
     .replace(rxAllNumberTypes, "number")
