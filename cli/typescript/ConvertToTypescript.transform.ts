@@ -20,6 +20,8 @@ const replaceProtoToTypescript = (str: string): string => str
     .replace(/repeated\s+(\w+)\s+(\w+):?\w*?\s(=\s*\d+|\w+)/g, "$2: $1[]")
     // changes words order
     .replace(groupTypeAndVariableName, "$2: $1")
+    // convert snake_case to camelCase
+    .replace(/([-_]\w)/g, (match: string): string => match[1].toUpperCase())
     // replace incorrects type names
     .replace(/bool/g, "boolean")
     .replace(rxAllNumberTypes, "number")
