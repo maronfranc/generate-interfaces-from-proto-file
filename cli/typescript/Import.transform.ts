@@ -2,6 +2,7 @@
 import { Transform, TransformCallback, TransformOptions } from "stream";
 
 const IMPORT_LIST = [
+    'import { Metadata } from "grpc";',
     'import { Observable } from "rxjs";',
 ] as const;
 
