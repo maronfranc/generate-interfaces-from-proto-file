@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "yarn ts-node cli/main.ts",
+    "file": "yarn ts-node cli/file.ts",
     "folder": "yarn ts-node cli/folder.ts"
   },
   "dependencies": {

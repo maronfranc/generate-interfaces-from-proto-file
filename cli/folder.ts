@@ -11,7 +11,7 @@ const READ_FOLDER_PATH = ARGS[0];
 const WRITE_FILE_PATH = ARGS[1];
 const foldersToRead: IPath[] = [];
 
-async function generateFolder(readFolderPath: IPath) {
+function generateFolder(readFolderPath: IPath) {
     if (!fs.existsSync(readFolderPath.writeTo)) {
         fs.mkdirSync(readFolderPath.writeTo);
     }
@@ -38,6 +38,7 @@ async function generateFolder(readFolderPath: IPath) {
         generateFolder(folderPaths);
     }
 }
+
 generateFolder({
     readFrom: READ_FOLDER_PATH,
     writeTo: WRITE_FILE_PATH
