@@ -5,7 +5,6 @@ const rxAllNumberTypes = new RegExp(`(${allNumberTypes.join("|")})`, "g");
 const groupTypeAndVariableName = new RegExp(`(${allNumberTypes.join("|")}|\\w+)\\s+(\\w+)\\s*=\\s*\\d+`, "g");
 
 const replaceProtoToTypescript = (str: string): string => str
-    // erases proto file syntax
     .replace("syntax = \"proto3\";", "")
     .replace("package checkout;", "")
     .replace(/rpc\s*(\w+)\s*\((\w+)\)\s*returns\s*\((\w+)\);/g, "$1: ($2: $2, metadata?: Metadata) => Observable<$3>;")
@@ -15,7 +14,6 @@ const replaceProtoToTypescript = (str: string): string => str
     // creates classes and interfaces
     .replace(/service/g, "export class")
     .replace(/message/g, "export interface")
-    .replace(/enum/g, "// TODO: enum convertion\nexport enum")
     // changes words order
     .replace(groupTypeAndVariableName, "$2: $1")
     // convert snake_case to camelCase
@@ -27,9 +25,7 @@ const replaceProtoToTypescript = (str: string): string => str
     .replace(/import\s+(".+");/g, "")
     // add [] when starts with repeated word
     .replace(/repeated\s+(\w+):?\w*?\s(=\s*\d+|\w+)/g, "$2: $1[]")
-    // Failed enum attempts
-    // .replace(/enum\s+(\w+)\s*{(\s*(\w+)\s*=\s*(\d+);\s*)+\}/g, "enum $1 {\n\t$2 = $3,\n}")
-    // .replace(/enum\s*(\w+)\s*{\n(?:\s*(\w+)\s*=\s*(\d+);)+\s*\n\s*}/, "enum $1 {\n\t$2 = $3,\n}")
+    .replace(/enum\s*(\w+)\s*{\n(?:\s*(\w+)\s*=\s*(\d+);)+\s*\n\s*}/, (match: string): string => "export " + match.replace(/;/g, ","))
     .trim();
 
 
