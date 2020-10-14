@@ -1,5 +1,6 @@
 import { Transform, TransformCallback, TransformOptions } from "stream";
 import { allNumberTypes } from "../protoTypes";
+import { firstLetterLowerCase } from "../utils/format";
 
 const rxAllNumberTypes = new RegExp(`(${allNumberTypes.join("|")})`, "g");
 const groupTypeAndVariableName = new RegExp(`(${allNumberTypes.join("|")}|\\w+)\\s+(\\w+)\\s*=\\s*\\d+`, "g");
@@ -7,10 +8,17 @@ const groupTypeAndVariableName = new RegExp(`(${allNumberTypes.join("|")}|\\w+)\
 const replaceProtoToTypescript = (str: string): string => str
     .replace("syntax = \"proto3\";", "")
     .replace("package checkout;", "")
-    .replace(/rpc\s*(\w+)\s*\((\w+)\)\s*returns\s*\((\w+)\);/g, "$1: ($2: $2, metadata?: Metadata) => Observable<$3>;")
+    .replace(/rpc\s*(\w+)\s*\((\w+)\)\s*returns\s*\((\w+)\);/g, (
+        _match: string,
+        functionName: string,
+        paramTypeName: string,
+        returnTypeName: string
+    ): string => {
+        return `${firstLetterLowerCase(functionName)}: (${firstLetterLowerCase(paramTypeName)}: ${paramTypeName}, metadata?: Metadata) => Observable<${returnTypeName}>;`
+    })
     // change to lowercase function name e param
     .replace(/(\w+):\s*\((\w+)\s*:\s*(\w+)\)\s*=>\s*Observable<(\w+)>;/g, "->L<-$1: (->L<-$2: $3) => Observable<$4>;")
-    .replace(/->L<-(\w+)/g, (_, word: string): string => word[0].toLowerCase() + word.substring(1))
+    .replace(/->L<-(\w+)/g, (_, word: string): string => firstLetterLowerCase(word))
     // creates classes and interfaces
     .replace(/service/g, "export class")
     .replace(/message/g, "export interface")
@@ -24,7 +32,7 @@ const replaceProtoToTypescript = (str: string): string => str
     .replace(/\w+\.(\w+):/g, "$1:")
     .replace(/import\s+(".+");/g, "")
     // add [] when starts with repeated word
-    .replace(/repeated\s+(\w+):?\w*?\s(=\s*\d+|\w+)/g, "$2: $1[]")
+    .replace(/repeated\s+(\w+):?\w*?\s(=\s*\d+|\w+)/g, "$1: $2[]")
     .replace(/enum\s*(\w+)\s*{\n(?:\s*(\w+)\s*=\s*(\d+);)+\s*\n\s*}/, (match: string): string => "export " + match.replace(/;/g, ","))
     .trim();
 
