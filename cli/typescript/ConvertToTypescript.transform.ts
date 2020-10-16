@@ -8,14 +8,12 @@ const groupTypeAndVariableName = new RegExp(`(${allNumberTypes.join("|")}|\\w+)\
 const replaceProtoToTypescript = (str: string): string => str
     .replace("syntax = \"proto3\";", "")
     .replace("package checkout;", "")
-    .replace(/rpc\s*(\w+)\s*\((\w+)\)\s*returns\s*\((\w+)\);/g, (
+    .replace(/rpc\s*(\w+)\s*\((\w+)\)\s*returns\s*\((?:\w+\.)*(\w+)\);/g, (
         _match: string,
         functionName: string,
         paramTypeName: string,
         returnTypeName: string
-    ): string => {
-        return `${firstLetterLowerCase(functionName)}: (${firstLetterLowerCase(paramTypeName)}: ${paramTypeName}, metadata?: Metadata) => Observable<${returnTypeName}>;`
-    })
+    ): string => `${firstLetterLowerCase(functionName)}: (${firstLetterLowerCase(paramTypeName)}: ${paramTypeName}, metadata?: Metadata) => Observable<${returnTypeName}>;`)
     // change to lowercase function name e param
     .replace(/(\w+):\s*\((\w+)\s*:\s*(\w+)\)\s*=>\s*Observable<(\w+)>;/g, "->L<-$1: (->L<-$2: $3) => Observable<$4>;")
     .replace(/->L<-(\w+)/g, (_, word: string): string => firstLetterLowerCase(word))
