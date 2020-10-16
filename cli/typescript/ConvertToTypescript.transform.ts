@@ -33,7 +33,7 @@ const replaceProtoToTypescript = (str: string): string => str
     .replace(/import\s+(".+");/g, "")
     // add [] when starts with repeated word
     .replace(/repeated\s+(\w+):?\w*?\s(=\s*\d+|\w+)/g, "$1: $2[]")
-    .replace(/enum\s*(\w+)\s*{\n(?:\s*(\w+)\s*=\s*(\d+);)+\s*\n\s*}/, (match: string): string => "export " + match.replace(/;/g, ","))
+    .replace(/enum\s*(\w+)\s*{\n(?:\s*(\w+)\s*=\s*(\d+);)+\s*\n\s*}/g, (match: string): string => "export " + match.replace(/;/g, ","))
     .trim();
 
 
