@@ -17,18 +17,21 @@ function generateFolder(readFolderPath: IPath) {
     }
 
     const files = fs.readdirSync(readFolderPath.readFrom);
-    files.forEach(file => {
-        const stat = fs.statSync(`${readFolderPath.readFrom}/${file}`);
+    files.forEach(fileOrFolder => {
+        const stat = fs.statSync(`${readFolderPath.readFrom}/${fileOrFolder}`);
         if (!stat.isDirectory()) {
-            const fileTs = file.replace(/.proto$/, ".ts");
+            const fileTs = fileOrFolder.replace(/(.*)(.proto)$/, (_match, filename): string => {
+                const camelCaseFileName = filename.replace(/([-_]\w)+/g, (match: string): string => match[1].toUpperCase());
+                return `${camelCaseFileName}.ts`;
+            });
             generateTypescript({
-                readFrom: `${readFolderPath.readFrom}/${file}`,
+                readFrom: `${readFolderPath.readFrom}/${fileOrFolder}`,
                 writeTo: `${readFolderPath.writeTo}/${fileTs}`,
             });
         } else {
             foldersToRead.push({
-                readFrom: `${readFolderPath.readFrom}/${file}`,
-                writeTo: `${readFolderPath.writeTo}/${file}`
+                readFrom: `${readFolderPath.readFrom}/${fileOrFolder}`,
+                writeTo: `${readFolderPath.writeTo}/${fileOrFolder}`
             });
         }
     });
