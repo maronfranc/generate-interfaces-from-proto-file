@@ -8,12 +8,13 @@ const groupTypeAndVariableName = new RegExp(`(${allNumberTypes.join("|")}|\\w+)\
 const replaceProtoToTypescript = (str: string): string => str
     .replace("syntax = \"proto3\";", "")
     .replace("package checkout;", "")
+    // .replace(/import\s+(".+");/g, "")
     .replace(/rpc\s*(\w+)\s*\((\w+)\)\s*returns\s*\((?:\w+\.)*(\w+)\);/g, (
         _match: string,
         functionName: string,
         paramTypeName: string,
         returnTypeName: string
-    ): string => `${firstLetterLowerCase(functionName)}: (${firstLetterLowerCase(paramTypeName)}: ${paramTypeName}, metadata?: Metadata) => Observable<${returnTypeName}>;`)
+    ): string => `public ${firstLetterLowerCase(functionName)}: (${firstLetterLowerCase(paramTypeName)}: ${paramTypeName}, metadata?: Metadata) => Observable<${returnTypeName}>;\n`)
     // change to lowercase function name e param
     .replace(/(\w+):\s*\((\w+)\s*:\s*(\w+)\)\s*=>\s*Observable<(\w+)>;/g, "->L<-$1: (->L<-$2: $3) => Observable<$4>;")
     .replace(/->L<-(\w+)/g, (_, word: string): string => firstLetterLowerCase(word))
@@ -28,7 +29,6 @@ const replaceProtoToTypescript = (str: string): string => str
     .replace(/bool/g, "boolean")
     .replace(rxAllNumberTypes, "number")
     .replace(/\w+\.(\w+):/g, "$1:")
-    .replace(/import\s+(".+");/g, "")
     // add [] when starts with repeated word
     .replace(/repeated\s+(\w+):?\w*?\s(=\s*\d+|\w+)/g, "$1: $2[]")
     .replace(/enum\s*(\w+)\s*{\n(?:\s*(\w+)\s*=\s*(\d+);)+\s*\n\s*}/g, (match: string): string => "export " + match.replace(/;/g, ","))
